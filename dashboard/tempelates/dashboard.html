@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Real-time Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js" integrity="sha512-JcWSIcUChh+HTuiT6pLzOvzEnFAtPHi/5T9WlAx0zR7FX1/V2TwfLvbvkQo0tQCKU21YHTL4xC6eGHkL6gPMqA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <h1>Real-time User Actions Dashboard</h1>
+    <div id="events"></div>
+
+    <script>
+        const socket = io.connect('http://localhost:5001');
+
+        socket.on('connect', () => {
+            console.log('Connected to dashboard server');
+        });
+
+        socket.on('new_event', (data) => {
+            const eventDiv = document.getElementById('events');
+            const p = document.createElement('p');
+            p.textContent = `Event Type: ${data.event_type}, Details: ${JSON.stringify(data.details)}, Timestamp: ${new Date(data.timestamp).toLocaleString()}`;
+            eventDiv.prepend(p);
+        });
+    </script>
+</body>
+</html>
