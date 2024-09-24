@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Actions Tracker</title>
+    <script>
+        // Function to send event data to the backend
+        function sendEvent(eventType, details) {
+            fetch('http://localhost:5000/event', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    event_type: eventType,
+                    details: details,
+                    timestamp: Date.now()
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Event sent:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+        // Capture click events
+        document.addEventListener('click', function(event) {
+            const details = {
+                x: event.clientX,
+                y: event.clientY,
+                element: event.target.tagName,
+                id: event.target.id,
+                classes: event.target.className
+            };
+            sendEvent('click', details);
+        });
+
+        // Capture page view
+        window.addEventListener('load', function() {
+            sendEvent('page_view', {
+                url: window.location.href,
+                title: document.title
+            });
+        });
+
+        // Capture form submissions
+        document.addEventListener('submit', function(event) {
+            const formData = new FormData(event.target);
+            const details = {};
+            formData.forEach((value, key) => {
+                details[key] = value;
+            });
+            sendEvent('form_submit', details);
+        });
+    </script>
+</head>
+<body>
+    <h1>Welcome to the User Actions Tracker</h1>
+    <button id="testButton">Click Me!</button>
+    <form id="testForm">
+        <input type="text" name="username" placeholder="Enter Username" required>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
