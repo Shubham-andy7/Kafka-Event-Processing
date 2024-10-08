@@ -1,0 +1,4 @@
+flask
+flask-socketio
+kafka-python
+plotly
