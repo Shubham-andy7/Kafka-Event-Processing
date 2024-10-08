@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'  # Updated version to a non-obsolete one
 
 services:
   backend:
@@ -34,11 +34,12 @@ services:
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092  # Added this line to fix the environment issue
     depends_on:
       - zookeeper
 
   zookeeper:
-    image: wurstmeister/zookeeper:3.4.6
+    image: zookeeper:3.7  # Updated Zookeeper image
     ports:
       - "2181:2181"
 
@@ -50,3 +51,11 @@ services:
     depends_on:
       - kafka
     command: python /app/spark_streaming.py
+
+  mongodb:
+    image: mongo:4.4  # Added MongoDB service
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/mongodb:/data/db  # Persist MongoDB data
