@@ -4,14 +4,14 @@ import json
 # Initialize Kafka Consumer
 consumer = KafkaConsumer(
     'website-events',
-    bootstrap_servers=['localhost:9092'],
+    bootstrap_servers=['kafka:9092'],  # Use Kafka container name
     auto_offset_reset='earliest',
     enable_auto_commit=True,
     group_id='website-group',
     value_deserializer=lambda x: json.loads(x.decode('utf-8'))
 )
 
-if __name__ == "__main__":
+if __name__ == "__main__":  
     print("Starting Kafka Consumer...")
     for message in consumer:
         event = message.value
