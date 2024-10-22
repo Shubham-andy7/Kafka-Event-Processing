@@ -10,6 +10,9 @@ services:
       - ./backend:/app
     depends_on:
       - kafka
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092  # Point to Kafka broker
+    restart: on-failure  # Restart if fails due to Kafka unavailability
   
   dashboard:
     build: ./dashboard
@@ -18,6 +21,11 @@ services:
       - "5001:5000"
     volumes:
       - ./dashboard:/app
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092  # Point to Kafka broker
+    restart: on-failure  # Restart if fails due to Kafka unavailability
 
   frontend:
     container_name: frontend
@@ -46,11 +54,16 @@ services:
   spark-streaming:
     build: ./streaming
     container_name: spark-streaming
-    volumes:
-      - ./streaming:/app
     depends_on:
       - kafka
+      - mongodb
+    volumes:
+      - ./streaming:/app
+    environment:
+      - PYSPARK_PYTHON=python3  # Set Python version if required
+      - PYSPARK_DRIVER_PYTHON=python3
     command: python /app/spark_streaming.py
+    restart: always
 
   mongodb:
     image: mongo:4.4  # Added MongoDB service
